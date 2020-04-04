@@ -13,7 +13,7 @@
         "classnames": "^2.2.6",
         "computed-async-mobx": "^4.2.1",
         "core-js": "3",
-        "fso-ts-generator": "/media/cache/code/asarium/fso-ts-generator",
+        "fso-ts-generator": "^1.1.0",
         "fuse.js": "^5.0.10-beta",
         "html-react-parser": "^0.10.2",
         "mobx": "^5.15.4",
