@@ -155,5 +155,5 @@
 }
 
 
-.MuiCardHeader-root{padding:5px !important}#react-root{margin:0;width:100%;height:100%}html,body{margin:0;height:100%}
+.MuiCardHeader-root{padding:5px !important}#react-root{margin:0;width:100%;height:100%;display:flex;flex-flow:column}html,body{margin:0;height:100%}
 
