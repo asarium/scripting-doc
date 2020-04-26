@@ -4,9 +4,9 @@ import {createStyles, fade, makeStyles, Theme} from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import SearchIcon from "@material-ui/icons/Search";
-import {observer} from "mobx-react";
+import {observer} from "mobx-react-lite";
 import React from "react";
-import {indexStore} from "../state/IndexStore";
+import {useStores} from "../state/useStores";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -58,6 +58,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
 
 const Header: React.FC = observer(() => {
+    const {indexStore} = useStores();
+
     const classes = useStyles();
 
     const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,7 +67,7 @@ const Header: React.FC = observer(() => {
     };
 
     return (
-        <AppBar position="sticky">
+        <AppBar position="static">
             <Toolbar variant="dense">
                 <Typography className={classes.title} variant="h6" noWrap>
                     FreeSpace Open Scripting Documentation

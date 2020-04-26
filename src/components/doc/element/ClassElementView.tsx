@@ -2,7 +2,7 @@ import {Typography} from "@material-ui/core";
 import {ClassElement} from "fso-ts-generator";
 import React from "react";
 import {When} from "react-if";
-import {documentationStore} from "../../../state/DocumentationStore";
+import {useDocStore} from "../../../state/useStores";
 import ElementLink from "../ElementLink";
 import ElementDescription from "./ElementDescription";
 import ElementName from "./ElementName";
@@ -13,6 +13,8 @@ interface IProps {
 }
 
 const ClassElementView: React.FC<IProps> = ({element, showFullPath}) => {
+    const documentationStore = useDocStore();
+
     return (
         <>
             <Typography style={{marginRight: "5px"}} component="span" color="textSecondary">

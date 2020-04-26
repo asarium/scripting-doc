@@ -2,7 +2,7 @@ import {Typography} from "@material-ui/core";
 import {DocumentationElement} from "fso-ts-generator";
 import React from "react";
 import {When} from "react-if";
-import {documentationStore} from "../../../state/DocumentationStore";
+import {useDocStore} from "../../../state/useStores";
 
 interface IProps {
     element: DocumentationElement;
@@ -10,11 +10,13 @@ interface IProps {
 }
 
 const ElementName: React.FC<IProps> = ({element, showFullPath}) => {
+    const documentationStore = useDocStore();
+
     let fullPathContent;
     if (showFullPath) {
         const parentPath = documentationStore.getElementParentPath(element);
         fullPathContent = parentPath.map(p => (
-            <Typography component="span" color="textSecondary">
+            <Typography component="span" color="textSecondary" key={p.id}>
                 {p.shortName.length > 0 ? p.shortName : p.name}.
             </Typography>
         ));

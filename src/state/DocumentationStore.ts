@@ -1,8 +1,10 @@
 import {asyncComputed} from "computed-async-mobx";
 import {DocumentationElement, ScriptingDocumentation, ValidationError} from "fso-ts-generator";
 import {action, autorun, computed, observable} from "mobx";
-import {createSearchWorker, FilteredDocumentationElement, SearchWorker} from "../worker/SearchWorker";
-import {indexStore} from "./IndexStore";
+import {IProgressState} from "../util/progress";
+import {FilteredDocumentationElement} from "../worker/SearchWorker";
+import {DocumentationIndex} from "./DocumentationIndex";
+import {IndexStore} from "./IndexStore";
 
 interface ElementMetaData {
     parentPath: DocumentationElement[];
@@ -26,41 +28,28 @@ function* enumerateDocumentationElements(
     }
 }
 
-export interface DocumentationLoadOperations {
-    startLoading(): void;
-
-    setIndeterminateProgress(description?: string): void;
-
-    setProgress(progress: number, description?: string): void;
-
-    finishedLoading(docData: unknown): void;
-}
-
 export class DocumentationStore {
-    @observable documentation?: ScriptingDocumentation;
-    @observable errorText?: string;
-
-    @observable loadingDocumentation: boolean = false;
-    @observable loadingDescription: string = "";
-    @observable loadingProgress: number = -1.0;
-
-    _searchWorker?: SearchWorker;
-
-    _elementDataLookup: Map<string, ElementMetaData> = new Map<string, ElementMetaData>();
-
-    filteredElements = asyncComputed(null as FilteredDocumentationElement[] | null, 500, async () => {
-        if (!indexStore.searchTerm || !this.hasDocumentation) {
+    @observable public documentation?: ScriptingDocumentation;
+    @observable public errorText?: string;
+    @observable public loadingDocumentation: boolean = true;
+    @observable public currentLoadingState?: IProgressState;
+    private _indexStore: IndexStore;
+    private _docIndex: DocumentationIndex;
+    public filteredElements = asyncComputed(null as FilteredDocumentationElement[] | null, 500, async () => {
+        if (!this._indexStore.searchTerm || !this.hasDocumentation) {
             return null;
         }
 
-        if (!this._searchWorker) {
-            this._searchWorker = await createSearchWorker();
-        }
+        const searchWorker = await this._docIndex.getSearchWorker();
 
-        return this._searchWorker.search(this.documentation!, indexStore.searchTerm!);
+        return searchWorker.search(this.documentation!, this._indexStore.searchTerm!);
     }, "filteredElements");
+    private _elementDataLookup: Map<string, ElementMetaData> = new Map<string, ElementMetaData>();
 
-    constructor() {
+    constructor(indexStore: IndexStore, docIndex: DocumentationIndex) {
+        this._indexStore = indexStore;
+        this._docIndex = docIndex;
+
         autorun(() => {
             this._elementDataLookup.clear();
             if (!this.documentation) {
@@ -79,24 +68,25 @@ export class DocumentationStore {
         return !!this.errorText;
     }
 
-    getDocumentationLoadOperation(): DocumentationLoadOperations {
-        return {
-            setProgress:              action((progress: number, description?: string) => {
-                this.loadingProgress = progress;
-                this.loadingDescription = description ?? "";
-            }),
-            setIndeterminateProgress: action((description?: string) => {
-                this.loadingProgress = -1.0;
-                this.loadingDescription = description ?? "";
-            }),
-            startLoading:             action(() => {
-                this.loadingDocumentation = true;
-                this.loadingProgress = -1.0;
-            }),
-            finishedLoading:          (docData: unknown) => {
-                this.setDocumentationData(docData);
-            },
-        };
+    @action
+    public setLoadingState(state: IProgressState) {
+        this.currentLoadingState = state;
+    }
+
+    @action
+    public setDocumentationData(docString: string) {
+        try {
+            const docData = JSON.parse(docString);
+            this.documentation = ScriptingDocumentation.parseAndValidate(docData);
+        } catch (err) {
+            if (err instanceof ValidationError) {
+                this.errorText = err.validationErrors.toString();
+            } else {
+                this.errorText = err.toString();
+            }
+        } finally {
+            this.loadingDocumentation = false;
+        }
     }
 
     getElementAnchor(element: DocumentationElement) {
@@ -133,21 +123,6 @@ export class DocumentationStore {
         return classEl;
     }
 
-    @action
-    private setDocumentationData(docData: unknown) {
-        try {
-            this.documentation = ScriptingDocumentation.parseAndValidate(docData);
-        } catch (err) {
-            if (err instanceof ValidationError) {
-                console.log(err.validationErrors);
-            } else {
-                console.log(err);
-            }
-        } finally {
-            this.loadingDocumentation = false;
-        }
-    }
-
     private populateElementMetadata() {
         if (!this.documentation) {
             return;
@@ -160,6 +135,3 @@ export class DocumentationStore {
         }
     }
 }
-
-export const documentationStore = new DocumentationStore();
-

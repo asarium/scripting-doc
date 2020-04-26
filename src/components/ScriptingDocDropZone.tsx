@@ -6,7 +6,7 @@ import * as React from "react";
 import {useCallback} from "react";
 import {useDropzone} from "react-dropzone";
 import {Case, Default, Switch} from "react-if";
-import {documentationStore} from "../state/DocumentationStore";
+import {useStores} from "../state/useStores";
 import {delay} from "../util/delay";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -37,6 +37,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }));
 
 const ScriptingDocDropZone: React.FC = () => {
+    const {documentationIndex} = useStores();
     const styles = useStyles();
 
     const onDrop = useCallback(async (acceptedFiles: File[]) => {
@@ -44,21 +45,14 @@ const ScriptingDocDropZone: React.FC = () => {
             return;
         }
 
-        const loadCallbacks = documentationStore.getDocumentationLoadOperation();
+        const loadCallbacks = documentationIndex.getDocumentationLoadOperation("local");
 
-        loadCallbacks.startLoading();
-        loadCallbacks.setIndeterminateProgress("Reading file");
+        const tracker = loadCallbacks.startLoading();
+        tracker.beginTask("Reading file");
 
         const content = await acceptedFiles[0].text();
 
-        try {
-            loadCallbacks.setIndeterminateProgress("Parsing JSON");
-
-            const parsedObject = JSON.parse(content);
-            loadCallbacks.finishedLoading(parsedObject);
-        } catch (e) {
-            console.log(e);
-        }
+        loadCallbacks.finishedLoading(content);
     }, []);
 
     const {

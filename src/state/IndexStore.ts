@@ -1,35 +1,20 @@
-import {action, computed, observable} from "mobx";
-import {documentationStore} from "./DocumentationStore";
-
-export enum IndexState {
-    NoData,
-    Loading,
-    DataAvailable,
-    InError,
-}
+import {History} from "history";
+import {action, observable} from "mobx";
 
 export class IndexStore {
     @observable searchTerm: string = "";
 
-    @computed get indexState(): IndexState {
-        if (documentationStore.hasDocumentation) {
-            return IndexState.DataAvailable;
-        }
+    private _history: History;
 
-        if (documentationStore.loadingDocumentation) {
-            return IndexState.Loading;
-        }
-
-        if (documentationStore.inError) {
-            return IndexState.InError;
-        }
-
-        return IndexState.NoData;
+    constructor(history: History) {
+        this._history = history;
     }
 
     @action updateSearch(newSearch: string) {
         this.searchTerm = newSearch;
     }
-}
 
-export const indexStore = new IndexStore();
+    public navigateTo(path: string) {
+        this._history.push(path);
+    }
+}

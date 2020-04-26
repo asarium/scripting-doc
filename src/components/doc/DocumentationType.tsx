@@ -1,7 +1,7 @@
 import {Typography} from "@material-ui/core";
 import {IteratorType, ListType, MapType, TupleType, TypeSpecifier} from "fso-ts-generator";
 import React from "react";
-import {documentationStore} from "../../state/DocumentationStore";
+import {useDocStore} from "../../state/useStores";
 import ElementLink from "./ElementLink";
 
 interface IProps {
@@ -81,6 +81,8 @@ function renderMapType(type: MapType) {
 }
 
 function renderType(type: TypeSpecifier) {
+    const documentationStore = useDocStore();
+
     if (typeof (type) === "string") {
         // Simple type so either a class or an internal type
         if (INTERNAL_TYPES.indexOf(type) !== -1) {
