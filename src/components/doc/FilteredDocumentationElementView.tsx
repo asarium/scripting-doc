@@ -3,6 +3,7 @@ import React from "react";
 import {useDocStore} from "../../state/useStores";
 import {FilteredDocumentationElement} from "../../worker/SearchWorker";
 import ElementContent from "./element/ElementContent";
+import {NameHightlightProvider} from "./element/ElementName";
 
 interface IProps {
     element: FilteredDocumentationElement;
@@ -13,7 +14,9 @@ const DocumentationElementView: React.FC<IProps> = ({element}) => {
 
     return (
         <Box id={documentationStore.getElementAnchor(element.element)}>
-            <ElementContent element={element.element} showFullPath={true}/>
+            <NameHightlightProvider matchRange={element.matches}>
+                <ElementContent element={element.element} showFullPath={true}/>
+            </NameHightlightProvider>
         </Box>
     );
 };
