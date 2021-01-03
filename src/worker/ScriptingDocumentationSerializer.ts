@@ -1,5 +1,5 @@
 import {ScriptingDocumentation} from "fso-ts-generator";
-import {JsonSerializable, SerializerImplementation} from "threads/dist/serializers";
+import {JsonSerializable, SerializerImplementation} from "threads";
 
 export class ScriptingDocumentationSerializer implements SerializerImplementation {
     deserialize(
@@ -16,7 +16,7 @@ export class ScriptingDocumentationSerializer implements SerializerImplementatio
         input: any,
         defaultSerialize: (inp: ScriptingDocumentation) => JsonSerializable): JsonSerializable {
         if (input instanceof ScriptingDocumentation) {
-            return input.serialize();
+            return input.serialize() as JsonSerializable;
         } else {
             return defaultSerialize(input);
         }
