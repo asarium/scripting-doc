@@ -1,7 +1,5 @@
 import {Box} from "@material-ui/core";
-import MuiExpansionPanel from "@material-ui/core/ExpansionPanel";
-import MuiExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
-import MuiExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
+import { Accordion, AccordionDetails, AccordionSummary } from "@material-ui/core";
 import withStyles from "@material-ui/core/styles/withStyles";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
@@ -26,7 +24,7 @@ const ExpansionPanel = withStyles({
         },
     },
     expanded: {},
-})(MuiExpansionPanel);
+})(Accordion);
 
 const ExpansionPanelSummary = withStyles({
     root:     {
@@ -44,13 +42,13 @@ const ExpansionPanelSummary = withStyles({
         },
     },
     expanded: {},
-})(MuiExpansionPanelSummary);
+})(AccordionSummary);
 
 const ExpansionPanelDetails = withStyles((theme) => ({
     root: {
         padding: theme.spacing(2),
     },
-}))(MuiExpansionPanelDetails);
+}))(AccordionDetails);
 
 interface IProps {
     element: DocumentationElement;

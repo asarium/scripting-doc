@@ -1,6 +1,7 @@
 import {asyncComputed} from "computed-async-mobx";
 import {DocumentationElement, ScriptingDocumentation, ValidationError} from "fso-ts-generator";
 import {action, autorun, computed, observable} from "mobx";
+import { delay } from "../util/delay";
 import {IProgressState} from "../util/progress";
 import {FilteredDocumentationElement} from "../worker/SearchWorker";
 import {DocumentationIndex} from "./DocumentationIndex";

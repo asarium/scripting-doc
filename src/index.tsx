@@ -1,6 +1,5 @@
 import {createHashHistory} from "history";
 import {configure, spy} from "mobx";
-import "mobx-react-lite/batchingForReactDom";
 import * as React from "react";
 import ReactDOM from "react-dom";
 import {Router} from "react-router-dom";

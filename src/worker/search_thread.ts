@@ -33,6 +33,11 @@ const api = {
 
         const matches = fuse.search(searchTerm);
 
+        // Limit to 30 elements since everything else is probably not useful anyway
+        if (matches.length > 30) {
+            matches.length = 30;
+        }
+
         return matches.map(match => convertMatchToFilterElement(match));
     },
 };

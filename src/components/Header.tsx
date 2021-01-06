@@ -1,3 +1,4 @@
+import { CircularProgress } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import InputBase from "@material-ui/core/InputBase";
 import {createStyles, fade, makeStyles, Theme} from "@material-ui/core/styles";
@@ -6,6 +7,8 @@ import Typography from "@material-ui/core/Typography";
 import SearchIcon from "@material-ui/icons/Search";
 import {observer} from "mobx-react-lite";
 import React from "react";
+import { When } from "react-if";
+import { useParams, useRouteMatch } from "react-router-dom";
 import {useStores} from "../state/useStores";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -40,6 +43,13 @@ const useStyles = makeStyles((theme: Theme) =>
             alignItems:     "center",
             justifyContent: "center",
         },
+        searchProgressIndicator: {
+            position:       "absolute",
+            pointerEvents:  "none",
+            top: 2,
+            left: 13,
+            zIndex: 1,
+        },
         inputRoot:  {
             color: "inherit",
         },
@@ -58,7 +68,17 @@ const useStyles = makeStyles((theme: Theme) =>
 
 
 const Header: React.FC = observer(() => {
-    const {indexStore} = useStores();
+    const {indexStore, documentationIndex} = useStores();
+
+    let docState;
+
+    // Check if the current document is currently being searched in
+    const match = useRouteMatch<{ id: string }>("/doc/:id");
+    if (match !== null) {
+        const {id} = match.params;
+
+        docState = documentationIndex.docs.get(id);
+    }
 
     const classes = useStyles();
 
@@ -75,6 +95,9 @@ const Header: React.FC = observer(() => {
                 <div className={classes.search}>
                     <div className={classes.searchIcon}>
                         <SearchIcon/>
+                        <When condition={!!docState && docState.filteredElements.busy}>
+                            <CircularProgress className={classes.searchProgressIndicator} size={30} color="primary" />
+                        </When>
                     </div>
                     <InputBase
                         placeholder="Search..."
