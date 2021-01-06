@@ -117,7 +117,7 @@ const Header: React.FC = observer(() => {
                         value={indexStore.searchTerm}
                     />
                 </div>
-                <Typography className={classes.versionNumber} variant="h6" noWrap>
+                <Typography className={classes.versionNumber} variant="subtitle2" color="textSecondary" noWrap>
                     {__VERSION__}
                 </Typography>
             </Toolbar>
