@@ -1,10 +1,14 @@
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ThreadsPlugin = require('threads-plugin');
+const GitRevisionPlugin = require('git-revision-webpack-plugin');
 
 const path = require('path');
 
 const isDevelopment = process.env.NODE_ENV === 'development';
+
+const gitRevisionPlugin = new GitRevisionPlugin()
 
 module.exports = {
     entry: './src/index.tsx',
@@ -82,6 +86,12 @@ module.exports = {
         }),
         new ThreadsPlugin({
             globalObject: 'this' // <-- this is the default value
+        }),
+        gitRevisionPlugin,
+        new webpack.DefinePlugin({
+          '__VERSION__': JSON.stringify(gitRevisionPlugin.version()),
+          '__COMMITHASH__': JSON.stringify(gitRevisionPlugin.commithash()),
+          '__BRANCH__': JSON.stringify(gitRevisionPlugin.branch()),
         }),
     ],
 };
