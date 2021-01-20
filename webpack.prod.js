@@ -7,6 +7,6 @@ assert(process.env.NODE_ENV === 'production');
 module.exports = merge(common, {
     mode: 'production',
     output: {
-        publicPath: "/scripting-doc/",
+        publicPath: "/",
     },
 });
