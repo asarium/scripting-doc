@@ -1,4 +1,4 @@
-import {createHashHistory} from "history";
+import {createBrowserHistory} from "history";
 import {configure, spy} from "mobx";
 import * as React from "react";
 import ReactDOM from "react-dom";
@@ -10,7 +10,7 @@ import {StoresProvider} from "./state/useStores";
 
 configure({enforceActions: "observed"});
 
-const history = createHashHistory();
+const history = createBrowserHistory();
 
 const ReactRoot: React.FC = () => {
     return <Router history={history}>

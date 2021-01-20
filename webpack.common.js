@@ -15,6 +15,7 @@ module.exports = {
     output: {
         filename: 'index_bundle.js',
         path: path.resolve(__dirname, 'dist'),
+        publicPath: "/",
     },
     module: {
         rules: [
@@ -78,7 +79,8 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             template: 'src/index.html',
-            title: "FreeSpace Open Scripting documentation"
+            title: "FreeSpace Open Scripting documentation",
+            publicPath: "/",
         }),
         new MiniCssExtractPlugin({
             filename: isDevelopment ? '[name].css' : '[name].[hash].css',
