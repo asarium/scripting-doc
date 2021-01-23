@@ -1,4 +1,5 @@
 import {Container, createStyles, CssBaseline} from "@material-ui/core";
+import RouterBreadcrumbs from "./components/RouterBreadcrumbs";
 import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {ThemeProvider} from "@material-ui/styles";
@@ -36,6 +37,7 @@ const ReactApp: React.FC = observer(() => {
             <CssBaseline/>
             <Header/>
             <Container maxWidth="xl" className={styles.mainContainer}>
+                <RouterBreadcrumbs />
                 <Switch>
                     <Route path="/doc/:id">
                         <DocumentationRootView/>
